@@ -206,6 +206,7 @@ exports.sendotp = async (req, res) => {
             lowerCaseAlphabets: false,
             specialChars: false,
         });
+
         const result = await OTP.findOne({ otp: otp });
 
         logger.info("Generated OTP:", otp);
@@ -217,7 +218,9 @@ exports.sendotp = async (req, res) => {
             });
         }
         const otpPayload = { email, otp };
+
         const otpBody = await OTP.create(otpPayload);
+        
         logger.info("OTP Sent Successfully:", { email });
         return res.status(200).json({
             success: true,
