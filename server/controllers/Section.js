@@ -1,7 +1,8 @@
 const Section = require("../models/Section");
 const Course = require("../models/Course");
 const SubSection = require("../models/SubSection");
-const logger = require('../utils/logger');  // Adjust the path as needed
+const logger = require('../utils/logger');
+const mongoose = require("mongoose");
 
 // CREATE a new section
 exports.createSection = async (req, res) => {

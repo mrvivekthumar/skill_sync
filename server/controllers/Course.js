@@ -4,8 +4,9 @@ const Section = require("../models/Section");
 const SubSection = require("../models/SubSection");
 const User = require("../models/User");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
-const CourseProgress = require("../models/CourseProgess");
+const CourseProgress = require("../models/CourseProgress");
 const { convertSecondsToDuration } = require("../utils/secToDuration");
+const mongoose = require("mongoose");
 const logger = require("../utils/logger");
 
 // Function to create a new course
@@ -25,6 +26,21 @@ exports.createCourse = async (req, res) => {
             status,
             instructions: _instructions,
         } = req.body;
+
+        if (!courseName?.trim() || !courseDescription?.trim() || !whatYouWillLearn?.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Course name, description, and learning outcomes are required",
+            });
+        }
+
+
+        if (!mongoose.Types.ObjectId.isValid(category)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid category ID format",
+            });
+        }
         // Get thumbnail image from request files
         const thumbnail = req.files.thumbnailImage;
 
@@ -137,6 +153,22 @@ exports.createCourse = async (req, res) => {
 exports.editCourse = async (req, res) => {
     try {
         const { courseId } = req.body;
+
+        if (!courseId) {
+            return res.status(400).json({
+                success: false,
+                message: "Course ID is required"
+            });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(courseId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid course ID format"
+            });
+        }
+
+
         const updates = req.body;
         const course = await Course.findById(courseId);
 
@@ -235,59 +267,22 @@ exports.getAllCourses = async (req, res) => {
 exports.getCourseDetails = async (req, res) => {
     try {
         const { courseId } = req.body;
-        const courseDetails = await Course.findOne({
-            _id: courseId,
-        })
-            .populate({
-                path: "instructor",
-                populate: {
-                    path: "additionalDetails",
-                },
-            })
-            .populate("category")
-            .populate("ratingAndReviews")
-            .populate({
-                path: "courseContent",
-                populate: {
-                    path: "subSection",
-                },
-            })
-            .exec();
-        // console.log(
-        //   "###################################### course details : ",
-        //   courseDetails,
-        //   courseId
-        // );
-        if (!courseDetails || !courseDetails.length) {
+
+        if (!courseId) {
             return res.status(400).json({
                 success: false,
-                message: `Could not find course with id: ${courseId}`,
+                message: "Course ID is required",
             });
         }
 
-        if (courseDetails.status === "Draft") {
-            return res.status(403).json({
+        // Validate ObjectId format
+        if (!mongoose.Types.ObjectId.isValid(courseId)) {
+            return res.status(400).json({
                 success: false,
-                message: `Accessing a draft course is forbidden`,
+                message: "Invalid course ID format",
             });
         }
 
-        return res.status(200).json({
-            success: true,
-            data: courseDetails,
-        });
-    } catch (error) {
-        logger.error(error.message);
-        return res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-    }
-};
-
-exports.getCourseDetails = async (req, res) => {
-    try {
-        const { courseId } = req.body;
         const courseDetails = await Course.findOne({
             _id: courseId,
         })
@@ -351,6 +346,20 @@ exports.getCourseDetails = async (req, res) => {
 exports.getFullCourseDetails = async (req, res) => {
     try {
         const { courseId } = req.body;
+
+        if (!courseId) {
+            return res.status(400).json({
+                success: false,
+                message: "Course ID is required"
+            });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(courseId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid course ID format"
+            });
+        }
         const userId = req.user.id;
         const courseDetails = await Course.findOne({
             _id: courseId,
@@ -376,7 +385,7 @@ exports.getFullCourseDetails = async (req, res) => {
             userId: userId,
         });
 
-        console.log("courseProgressCount : ", courseProgressCount);
+        logger.info("courseProgressCount:", courseProgressCount);
 
         if (!courseDetails) {
             return res.status(400).json({
@@ -451,6 +460,20 @@ exports.getInstructorCourses = async (req, res) => {
 exports.deleteCourse = async (req, res) => {
     try {
         const { courseId } = req.body;
+
+        if (!courseId) {
+            return res.status(400).json({
+                success: false,
+                message: "Course ID is required"
+            });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(courseId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid course ID format"
+            });
+        }
 
         // Find the course
         const course = await Course.findById(courseId);

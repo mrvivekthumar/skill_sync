@@ -12,6 +12,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { cloudinaryConnect } = require("./config/cloudinary");
 const fileUpload = require("express-fileupload");
+const contactRoutes = require("./routes/contact");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -39,6 +40,7 @@ app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/course", courseRoutes);
 app.use("/api/v1/payment", paymentRoutes);
+app.use("/api/v1/contact", contactRoutes);
 
 
 //def route	
@@ -51,5 +53,5 @@ app.get("/kt", (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`App is running at ${PORT}`)
+    logger.info(`App is running at port ${PORT}`);
 })

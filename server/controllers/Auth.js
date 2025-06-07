@@ -27,6 +27,13 @@ exports.signup = async (req, res) => {
 
         logger.info("Received signup request:", { email });
 
+        if (firstName.trim().length < 2 || lastName.trim().length < 2) {
+            return res.status(400).json({
+                success: false,
+                message: "First name and last name must be at least 2 characters long",
+            });
+        }
+
         // Check if All Details are there or not
         if (!firstName || !lastName || !email || !password || !confirmPassword || !otp) {
             logger.error("All fields are required");
@@ -70,8 +77,7 @@ exports.signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create the user
-        let approved = "";
-        approved === "Instructor" ? (approved = false) : (approved = true);
+        let approved = accountType === "Instructor" ? false : true;
 
         // Create the Additional Profile For User
         const profileDetails = await Profile.create({
@@ -220,7 +226,7 @@ exports.sendotp = async (req, res) => {
         const otpPayload = { email, otp };
 
         const otpBody = await OTP.create(otpPayload);
-        
+
         logger.info("OTP Sent Successfully:", { email });
         return res.status(200).json({
             success: true,

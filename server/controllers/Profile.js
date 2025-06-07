@@ -1,5 +1,5 @@
 const Course = require("../models/Course");
-const CourseProgress = require("../models/CourseProgess");
+const CourseProgress = require("../models/CourseProgress");
 const Profile = require("../models/Profile");
 const User = require("../models/User");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
@@ -59,12 +59,7 @@ exports.updateProfile = async (req, res) => {
 
 exports.deleteAccount = async (req, res) => {
 	try {
-		// TODO: Find More on Job Schedule
-		// const job = schedule.scheduleJob("10 * * * * *", function () {
-		//      console.log("The answer to life, the universe, and everything!");
-		// });
-		// console.log(job);
-		
+
 		const id = req.user.id;
 		const user = await User.findById({ _id: id });
 		if (!user) {

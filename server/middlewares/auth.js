@@ -1,19 +1,7 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const User = require("../models/User");
-
-// added a logging library 
-const winston = require("winston");
-
-// Create a Winston logger instance
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.json(),
-    transports: [
-        new winston.transports.Console(),
-        // You can add more transports here, such as file, database, etc.
-    ],
-});
+const logger = require("../utils/logger");
 
 //auth
 exports.auth = async (req, res, next) => {
@@ -23,7 +11,8 @@ exports.auth = async (req, res, next) => {
         //extract token
         const token = req.cookies.token
             || req.body.token
-            || req.header("Authorization").replace("Bearer ", "");
+            || (req.header("Authorization") && req.header("Authorization").replace("Bearer ", ""));
+
         logger.info("AFTER TOKEN EXTRACTION");
 
         //if token missing, then return response

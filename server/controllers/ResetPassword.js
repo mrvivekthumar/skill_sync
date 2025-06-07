@@ -25,9 +25,7 @@ exports.resetPasswordToken = async (req, res) => {
             { new: true }
         );
         logger.info("DETAILS", updatedDetails);
-        const url = `http://localhost:3000/update-password/${token}`;
-        // const url = `https://study-notion-frontend-wheat.vercel.app/update-password/${token}`;
-        // const url = `https://skill-sync-4e5nbglbx-mrvivekthumars-projects.vercel.app/update-password/${token}`;
+        const url = `${process.env.FRONTEND_URL}/update-password/${token}`;
 
         await mailSender(
             email,
