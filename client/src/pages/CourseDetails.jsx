@@ -14,6 +14,8 @@ import { formatDate } from "../services/formatDate"
 import { fetchCourseDetails } from "../services/operations/courseDetailsAPI"
 import { buyCourse } from "../services/operations/studentFeaturesAPI"
 import GetAvgRating from "../utils/avgRating"
+import { toast } from "react-hot-toast"
+import { addToCart } from "../slices/cartSlice"
 import Error from "./Error"
 
 function CourseDetails() {
@@ -116,6 +118,35 @@ function CourseDetails() {
         })
     }
 
+    const handleAddToCart = () => {
+        if (user && user?.accountType === "Instructor") {
+            toast.error("You are an Instructor. You can't buy a course.")
+            return
+        }
+
+        // Add this check for already enrolled courses
+        if (user && user?.courses.includes(courseId)) {
+            toast.error("You are already enrolled in this course")
+            return
+        }
+
+        if (token) {
+            dispatch(addToCart(response.data?.courseDetails))
+            toast.success("Course added to cart")
+            return
+        }
+        setConfirmationModal({
+            text1: "You are not logged in!",
+            text2: "Please login to add Course to Cart.",
+            btn1Text: "Login",
+            btn2Text: "Cancel",
+            btn1Handler: () => navigate("/login"),
+            btn2Handler: () => setConfirmationModal(null),
+        })
+    }
+
+
+
     if (paymentLoading) {
         // console.log("payment loading")
         return (
@@ -127,10 +158,10 @@ function CourseDetails() {
 
     return (
         <>
-            <div className={`relative w-full bg-richblack-800`}>
+            <div className={`relative w-full bg-richblack-800 pb-8`}>
                 {/* Hero Section */}
                 <div className="mx-auto box-content px-4 lg:w-[1260px] 2xl:relative ">
-                    <div className="mx-auto grid min-h-[450px] max-w-maxContentTab justify-items-center py-8 lg:mx-0 lg:justify-items-start lg:py-0 xl:max-w-[810px]">
+                    <div className="mx-auto grid min-h-[500px] max-w-maxContentTab justify-items-center py-8 lg:mx-0 lg:justify-items-start lg:py-12 xl:max-w-[810px]">
                         <div className="relative block max-h-[30rem] lg:hidden">
                             <div className="absolute bottom-0 left-0 h-full w-full shadow-[#161D29_0px_-64px_36px_-28px_inset]"></div>
                             <img
@@ -178,21 +209,24 @@ function CourseDetails() {
                                 <button className="yellowButton" onClick={handleBuyCourse}>
                                     Buy Now
                                 </button>
-                                <button className="blackButton">Add to Cart</button>
+                                <button className="blackButton" onClick={handleAddToCart}>
+                                    Add to Cart
+                                </button>
                             </div>
                         </div>
                     </div>
                     {/* Courses Card */}
-                    <div className="right-[1rem] top-[60px] mx-auto hidden min-h-[600px] w-1/3 max-w-[410px] translate-y-24 md:translate-y-0 lg:absolute lg:block">
+                    <div className="right-[1rem] top-[60px] mx-auto hidden min-h-[650px] w-1/3 max-w-[410px] translate-y-24 md:translate-y-0 lg:absolute lg:block lg:z-10">
                         <CourseDetailsCard
                             course={response?.data?.courseDetails}
                             setConfirmationModal={setConfirmationModal}
                             handleBuyCourse={handleBuyCourse}
+                            handleAddToCart={handleAddToCart}
                         />
                     </div>
                 </div>
             </div>
-            <div className="mx-auto box-content px-4 text-start text-richblack-5 lg:w-[1260px]">
+            <div className="mx-auto box-content px-4 text-start text-richblack-5 lg:w-[1260px] mt-32 lg:mt-8">
                 <div className="mx-auto max-w-maxContentTab lg:mx-0 xl:max-w-[810px]">
                     {/* What will you learn section */}
                     <div className="my-8 border border-richblack-600 p-8">

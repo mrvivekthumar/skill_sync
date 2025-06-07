@@ -7,8 +7,8 @@ export default function Cart() {
     const { total, totalItems } = useSelector((state) => state.cart)
 
     return (
-        <>
-            <h1 className="mb-14 text-3xl font-medium text-richblack-5 ml-16 md:ml-0">Cart</h1>
+        <div className="mx-auto w-11/12 max-w-[1000px] py-10">
+            <h1 className="mb-14 text-3xl font-medium text-richblack-5">Cart</h1>
             <p className="border-b border-b-richblack-400 pb-2 font-semibold text-richblack-400">
                 {totalItems} Courses in Cart
             </p>
@@ -22,6 +22,6 @@ export default function Cart() {
                     Your cart is empty
                 </p>
             )}
-        </>
+        </div>
     )
 }
