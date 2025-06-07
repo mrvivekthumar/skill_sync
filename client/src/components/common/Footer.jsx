@@ -171,7 +171,7 @@ const Footer = () => {
                         })}
                     </div>
 
-                    <div className="text-center">Skill Sync ❤️ Made For Learning</div>
+                    <div className="text-center">Study Notion ❤️ Made For Learning</div>
                 </div>
             </div>
         </div>

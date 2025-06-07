@@ -23,7 +23,7 @@ const ContactUsForm = () => {
                 contactusEndpoint.CONTACT_US_API,
                 data
             )
-            // console.log("Email Res - ", res)
+            console.log("Response - ", res)
             setLoading(false)
         } catch (error) {
             console.log("ERROR MESSAGE - ", error.message)

@@ -15,6 +15,8 @@ const fileUpload = require("express-fileupload");
 const contactRoutes = require("./routes/contact");
 const dotenv = require("dotenv");
 
+const logger = require("./utils/logger");
+
 dotenv.config();
 const PORT = process.env.PORT || 4000;
 
